@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment
+
+Create a `.env.local` in the project root:
+
+```env
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/autoshop?schema=public
+
+# NextAuth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=change-me
+
+# Cloudinary (server-side only)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+# Optional unsigned fallback (no secret needed, configure preset in Cloudinary)
+CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
+```
+
+When using Docker, export the same variables in your shell or place them inside a `.env` file next to `docker-compose.yml` so they are injected into the `web` service.
