@@ -38,12 +38,12 @@ export default async function Home() {
 
         <div className="container-page flex flex-col gap-16 relative">
           <div className="mb-12 md:mb-16 max-w-3xl">
-            <h2 className="text-[32px] md:text-[40px] font-extrabold leading-tight">
-              AVR Group - это не просто продажа
+            <h2 className="text-[32px] md:text-[40px] font-extrabолd leading-tight">
+              AutoShop - это не просто продажа
               премиальных автомобилей.
             </h2>
             <p className="mt-5 text-gray-400 text-base md:text-lg max-w-2xl">
-              Для нас «премиум» - это не только статус, но и сервис, продуманный до мелочей. Каждый клиент - VIP персона. С AVR Group вы получаете не просто ключи от машины, а эмоции и комфорт, которые запоминаются надолго.
+              Для нас «премиум» - это не только статус, но и сервис, продуманный до мелочей. Каждый клиент - VIP персона. С AutoShop вы получаете не просто ключи от машины, а эмоции и комфорт, которые запоминаются надолго.
             </p>
           </div>
 
@@ -270,12 +270,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Floating Chat Button */}
-      <div className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-[#C8BF2F] flex items-center justify-center shadow-lg hover:bg-[#B3AA2C] transition-colors cursor-pointer">
-        <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
-          <span className="text-white text-xs">?</span>
-        </div>
-      </div>
+      
     </div>
   );
 }
