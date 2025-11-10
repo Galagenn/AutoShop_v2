@@ -14,12 +14,26 @@ const registerSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    // Check database connection first
+    try {
+      await prisma.$connect()
+    } catch (connectError) {
+      console.error('[REGISTER_DB_CONNECT_ERROR]', connectError)
+      return NextResponse.json({ error: 'Проблема подключения к базе данных' }, { status: 500 })
+    }
+
     const body = await req.json()
     const parsed = registerSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({ error: 'Неверные данные' }, { status: 400 })
     }
     const { email, password, name, role } = parsed.data
+
+    // Check if DATABASE_URL is configured
+    if (!process.env.DATABASE_URL) {
+      console.error('[REGISTER_ERROR] DATABASE_URL is not configured')
+      return NextResponse.json({ error: 'Проблема подключения к базе данных' }, { status: 500 })
+    }
 
     const existing = await prisma.user.findUnique({ where: { email } })
     if (existing) return NextResponse.json({ error: 'Пользователь уже существует' }, { status: 409 })
@@ -37,8 +51,28 @@ export async function POST(req: Request) {
     }
     // Database connection or schema errors
     const message = typeof e === 'object' && e && 'message' in e ? String((e as { message?: string }).message) : ''
-    console.error('[REGISTER_ERROR]', e)
-    if (message.toLowerCase().includes('connect') || message.toLowerCase().includes('database')) {
+    const errorCode = typeof e === 'object' && e && 'code' in e ? String((e as { code?: string }).code) : ''
+    
+    console.error('[REGISTER_ERROR]', {
+      message,
+      code: errorCode,
+      error: e
+    })
+    
+    // Check for various database connection error patterns
+    const isConnectionError = 
+      message.toLowerCase().includes('connect') || 
+      message.toLowerCase().includes('database') ||
+      message.toLowerCase().includes('connection') ||
+      message.toLowerCase().includes('timeout') ||
+      message.toLowerCase().includes('refused') ||
+      errorCode === 'P1001' || // Can't reach database server
+      errorCode === 'P1002' || // Database server closed the connection
+      errorCode === 'P1003' || // Database does not exist
+      errorCode === 'P1009' || // Database already exists
+      errorCode === 'P1017'    // Server has closed the connection
+    
+    if (isConnectionError) {
       return NextResponse.json({ error: 'Проблема подключения к базе данных' }, { status: 500 })
     }
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
