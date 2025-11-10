@@ -59,7 +59,7 @@ export default function HeroSection() {
       <div className="container-page">
         <div className="hero-filters">
           {/* Brand dropdown */}
-          <div ref={brandRef} className={`hero-dd ${openBrand ? 'open' : ''}`} style={{ width: 160 }} onClick={() => setOpenBrand(!openBrand)}>
+          <div ref={brandRef} className={`hero-dd hero-dd-brand ${openBrand ? 'open' : ''}`} onClick={() => setOpenBrand(!openBrand)}>
             <span className="hero-dd-label">{brand || 'Марка'}</span>
             <svg className="hero-dd-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10l5 5l5-5z"/></svg>
             {openBrand && (
@@ -74,11 +74,11 @@ export default function HeroSection() {
               </div>
             )}
           </div>
-          <div className="hero-filter" style={{ width: 150 }}>
+          <div className="hero-filter hero-filter-model">
             <input className="hero-input" placeholder="Модель" value={model} onChange={(e) => setModel(e.target.value)} />
           </div>
           {/* Year dropdown */}
-          <div ref={yearRef} className={`hero-dd ${openYear ? 'open' : ''}`} style={{ width: 140 }} onClick={() => setOpenYear(!openYear)}>
+          <div ref={yearRef} className={`hero-dd hero-dd-year ${openYear ? 'open' : ''}`} onClick={() => setOpenYear(!openYear)}>
             <span className="hero-dd-label">{year || 'Год'}</span>
             <svg className="hero-dd-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10l5 5l5-5z"/></svg>
             {openYear && (
@@ -93,7 +93,7 @@ export default function HeroSection() {
               </div>
             )}
           </div>
-          <div className="hero-filter" style={{ width: 140 }}>
+          <div className="hero-filter hero-filter-price">
             <input className="hero-input" placeholder="Цена до" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
           </div>
           <button className="hero-find" onClick={onFind}>Найти</button>
@@ -122,14 +122,14 @@ export default function HeroSection() {
       <div className="container-page mt-4 md:mt-8">
         <div className="relative hero-bottom">
           {/* Accent line */}
-          <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-[#C8BF2F] rounded-r" />
+          <div className="hero-accent-line absolute left-0 top-4 bottom-4 w-[2px] bg-[#C8BF2F] rounded-r" />
           
           {/* Content grid */}
           <div className="pl-4 md:pl-6 grid gap-4 md:gap-6">
             {/* Header row: Title + Button */}
             <div className="hero-header-row">
               <div className="flex-1">
-                <h3 className="text-xl md:text-2xl font-bold tracking-tight mb-2 md:mb-3">{currentCar.title}</h3>
+                <h3 className="hero-title text-xl md:text-2xl font-bold tracking-tight mb-2 md:mb-3">{currentCar.title}</h3>
                 <p className="hero-desc">
                   {currentCar.description}
                 </p>
@@ -143,7 +143,7 @@ export default function HeroSection() {
             </div>
 
             {/* Metrics row */}
-            <div className="grid grid-cols-3 gap-4 md:gap-6 pt-4 border-t border-[#2a2a2a]">
+            <div className="metrics-grid grid grid-cols-3 gap-4 md:gap-6 pt-4 border-t border-[#2a2a2a]">
               <Metric value={currentCar.mileage} label="ПРОБЕГ" />
               <Metric value={currentCar.speed} label="КМ/Ч" />
               <Metric value={currentCar.year} label="ГОД" />
@@ -157,14 +157,14 @@ export default function HeroSection() {
 
 function Metric({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex items-center gap-2 mb-1">
-        <GearIcon className="w-4 h-4 md:w-5 md:h-5 text-white/50" />
-        <div className="h-[1px] w-8 md:w-12 bg-[#C8BF2F]/40" />
+    <div className="metric-item flex flex-col items-start gap-2">
+      <div className="metric-icon-row flex items-center gap-2 mb-1">
+        <GearIcon className="metric-icon w-4 h-4 md:w-5 md:h-5 text-white/50" />
+        <div className="metric-icon-divider h-[1px] w-8 md:w-12 bg-[#C8BF2F]/40" />
       </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-2xl md:text-3xl leading-none font-bold tracking-tight">{value}</span>
-        <span className="text-[10px] md:text-xs leading-none text-white/60 uppercase tracking-wider">{label}</span>
+      <div className="metric-text flex flex-col gap-1">
+        <span className="metric-value text-2xl md:text-3xl leading-none font-bold tracking-tight">{value}</span>
+        <span className="metric-label text-[10px] md:text-xs leading-none text-white/60 uppercase tracking-wider">{label}</span>
       </div>
     </div>
   );
