@@ -26,23 +26,27 @@ echo "2️⃣ Переменная DATABASE_URL в контейнере web:"
 $DOCKER_COMPOSE exec -T web env | grep DATABASE_URL || echo "❌ DATABASE_URL не найден"
 echo ""
 
-echo "3️⃣ Проверка доступности базы данных из контейнера web:"
+echo "3️⃣ Проверка существования базы данных autoshop:"
+$DOCKER_COMPOSE exec -T db psql -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='autoshop'" 2>/dev/null && echo "✅ База данных autoshop существует" || echo "❌ База данных autoshop не существует"
+echo ""
+
+echo "4️⃣ Проверка доступности базы данных из контейнера web:"
 $DOCKER_COMPOSE exec -T web sh -c "nc -zv db 5432 2>&1 || echo '❌ Не удается подключиться к db:5432'" || echo "⚠️  nc не установлен, пропускаем проверку"
 echo ""
 
-echo "4️⃣ Логи базы данных (последние 30 строк):"
+echo "5️⃣ Логи базы данных (последние 30 строк):"
 $DOCKER_COMPOSE logs --tail=30 db
 echo ""
 
-echo "5️⃣ Логи приложения (последние 30 строк):"
+echo "6️⃣ Логи приложения (последние 30 строк):"
 $DOCKER_COMPOSE logs --tail=30 web
 echo ""
 
-echo "6️⃣ Попытка подключения к БД через Prisma:"
+echo "7️⃣ Попытка подключения к БД через Prisma:"
 $DOCKER_COMPOSE exec -T web npx prisma db pull --force 2>&1 | head -20 || echo "❌ Ошибка подключения"
 echo ""
 
-echo "7️⃣ Проверка миграций:"
+echo "8️⃣ Проверка миграций:"
 $DOCKER_COMPOSE exec -T web npx prisma migrate status 2>&1 || echo "❌ Ошибка проверки миграций"
 echo ""
 

@@ -48,6 +48,19 @@ $DOCKER_COMPOSE exec -T db pg_isready -U postgres || {
     sleep 5;
 }
 
+echo "📊 Проверяем существование базы данных autoshop..."
+DB_EXISTS=$($DOCKER_COMPOSE exec -T db psql -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='autoshop'" 2>/dev/null || echo "")
+
+if [ -z "$DB_EXISTS" ]; then
+    echo "📝 База данных autoshop не существует, создаем..."
+    $DOCKER_COMPOSE exec -T db psql -U postgres -c "CREATE DATABASE autoshop;" || {
+        echo "⚠️  Ошибка при создании базы данных, возможно она уже существует";
+    }
+    echo "✅ База данных autoshop создана или уже существует"
+else
+    echo "✅ База данных autoshop уже существует"
+fi
+
 echo "📊 Применяем миграции Prisma..."
 $DOCKER_COMPOSE exec -T web npx prisma migrate deploy || { 
     echo "⚠️  Ошибка при применении миграций, пробуем альтернативный способ...";
