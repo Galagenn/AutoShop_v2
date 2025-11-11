@@ -144,6 +144,15 @@ export default async function Page({ params }: PageProps) {
     return cityMap[key] || capitalizeFirst(value)
   }
 
+  const normalizePhoneForTel = (value?: string | null) => {
+    if (!value) return undefined
+    const trimmed = String(value).trim()
+    const hasPlus = trimmed.startsWith('+')
+    const digits = trimmed.replace(/[^\d]/g, '')
+    if (!digits) return undefined
+    return hasPlus ? `+${digits}` : digits
+  }
+
   // Format engine display
   const specEngine = car.engineVolume && car.engineType 
     ? `${car.engineVolume} • ${capitalizeFirst(car.engineType)}`
@@ -170,6 +179,9 @@ export default async function Page({ params }: PageProps) {
     { label: 'Город', value: translateCity(car.city) },
   ]
 
+  const telPhone = normalizePhoneForTel(car.phone)
+  const telHref = telPhone ? `tel:${telPhone}` : '#contact'
+
   return (
     <div className="car-detail">
       <div className="container-page car-header">
@@ -192,7 +204,7 @@ export default async function Page({ params }: PageProps) {
                 <div className="price">{car.price.toLocaleString()} ₸</div>
               </div>
               <div className="actions-row">
-                <a href="#contact" className="btn-primary">Связаться с продавцом</a>
+                <a href={telHref} className="btn-primary">Связаться с продавцом</a>
                 <FavoriteButton carId={car.id} initialFavorite={isFavorited} />
               </div>
 
@@ -222,7 +234,7 @@ export default async function Page({ params }: PageProps) {
                 <h3 className="section-heading">Контакты продавца</h3>
                 <div className="muted-text" style={{ display: 'grid', gap: '4px' }}>
                   <div>Имя: {car.owner?.name ?? 'Продавец'}</div>
-                  <div>Телефон: {car.phone || '—'}</div>
+                  <div>Телефон: {telPhone ? <a className="text-[#C8BF2F]" href={telHref}>{car.phone}</a> : '—'}</div>
                   <div>Email: {car.owner?.email}</div>
                 </div>
               </div>

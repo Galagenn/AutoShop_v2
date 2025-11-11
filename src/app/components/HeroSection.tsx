@@ -34,6 +34,8 @@ export default function HeroSection() {
   const [openYear, setOpenYear] = useState(false);
   const brandRef = useRef<HTMLDivElement>(null);
   const yearRef = useRef<HTMLDivElement>(null);
+  const [brandOptions, setBrandOptions] = useState<string[]>([]);
+  const [yearOptions, setYearOptions] = useState<number[]>([]);
 
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
@@ -43,6 +45,26 @@ export default function HeroSection() {
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
+
+  useEffect(() => {
+    let ignore = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/filters/options', { cache: 'no-store' })
+        const data = await res.json()
+        if (!ignore) {
+          setBrandOptions(Array.isArray(data.brands) ? data.brands : [])
+          setYearOptions(Array.isArray(data.years) ? data.years : [])
+        }
+      } catch {
+        if (!ignore) {
+          setBrandOptions([])
+          setYearOptions([])
+        }
+      }
+    })()
+    return () => { ignore = true }
+  }, [])
 
   const onFind = () => {
     const params = new URLSearchParams();
@@ -65,7 +87,7 @@ export default function HeroSection() {
             {openBrand && (
               <div className="hero-dd-menu">
                 <div className="hero-dd-list">
-                  {['BMW','HYUNDAI','PORSCHE','TOYOTA','LEXUS','AUDI','MERCEDES-BENZ'].map((b) => (
+                  {(brandOptions.length ? brandOptions : ['BMW','HYUNDAI','PORSCHE','TOYOTA','LEXUS','AUDI','MERCEDES-BENZ']).map((b) => (
                     <div key={b} className={`hero-dd-item ${brand===b ? 'active' : ''}`} onClick={() => { setBrand(b); setOpenBrand(false); }}>
                       {b}
                     </div>
@@ -84,7 +106,7 @@ export default function HeroSection() {
             {openYear && (
               <div className="hero-dd-menu">
                 <div className="hero-dd-list">
-                  {[2025,2024,2023,2022,2021].map((y) => (
+                  {(yearOptions.length ? yearOptions : [2025,2024,2023,2022,2021]).map((y) => (
                     <div key={y} className={`hero-dd-item ${String(y)===year ? 'active' : ''}`} onClick={() => { setYear(String(y)); setOpenYear(false); }}>
                       {y}
                     </div>

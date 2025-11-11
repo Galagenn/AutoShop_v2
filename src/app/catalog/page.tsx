@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth()
+  const role = (session?.user as unknown as { role?: string })?.role || undefined
   // @ts-ignore
   const userId = session?.user?.id as string | undefined
   const sp = await searchParams
@@ -65,6 +66,35 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     carsDb = []
   }
 
+  // Build filter options
+  let brands: string[] = []
+  let models: string[] = []
+  let years: number[] = []
+  let maxPriceSteps: number[] = []
+  try {
+    const brandRows = await prisma.car.findMany({ select: { brand: true }, distinct: ['brand'], orderBy: { brand: 'asc' } })
+    brands = brandRows.map(r => r.brand).filter(Boolean)
+    if (brand) {
+      const modelRows = await prisma.car.findMany({ where: { brand: { equals: brand, mode: 'insensitive' } as any }, select: { model: true }, distinct: ['model'], orderBy: { model: 'asc' } })
+      models = modelRows.map(r => r.model).filter(Boolean)
+    }
+    const yearAgg = await prisma.car.aggregate({ _min: { year: true }, _max: { year: true } })
+    const yMin = yearAgg._min.year ?? 1990
+    const yMax = yearAgg._max.year ?? new Date().getFullYear()
+    const from = Math.min(yMin, yMax)
+    const to = Math.max(yMin, yMax)
+    years = Array.from({ length: (to - from + 1) }, (_, i) => to - i) // desc
+    const priceAgg = await prisma.car.aggregate({ _max: { price: true } })
+    const pMax = priceAgg._max.price ?? 0
+    const ceilTo = (n: number, step: number) => Math.ceil(n / step) * step
+    const upper = ceilTo(pMax, 1_000_000)
+    const presets = [1_000_000, 2_000_000, 5_000_000, 10_000_000, 20_000_000]
+    maxPriceSteps = [...new Set([...presets, upper].filter(n => n > 0 && n <= Math.max(upper, 1_000_000)))]
+    maxPriceSteps.sort((a,b) => a - b)
+  } catch {
+    // keep defaults
+  }
+
   const cars: UiCar[] = (carsDb as any).map((c: any): UiCar => ({
     id: c.id,
     title: `${c.brand} ${c.model}`,
@@ -94,7 +124,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
       <section className="py-4 md:py-6 bg-[#111] border-y border-[#2a2a2a]">
         <div className="container-page">
-            <FilterBar />
+            <FilterBar options={{ brands, models, years, maxPriceSteps }} />
         </div>
       </section>
 
@@ -126,7 +156,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
           <p className="text-white/70 text-lg mb-6 md:mb-8 max-w-2xl mx-auto">Оставьте заявку, и мы подберём для вас варианты</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4 md:mb-6">
             <Link href="/contact" className="btn-primary hover-glow">Оставить заявку</Link>
-            <Link href="/sell" className="btn-secondary hover-glow">Продать автомобиль</Link>
+            {role === 'SELLER' && (
+              <Link href="/sell" className="btn-secondary hover-glow">Продать автомобиль</Link>
+            )}
           </div>
         </div>
       </section>

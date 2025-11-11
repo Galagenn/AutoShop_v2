@@ -65,6 +65,9 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [brandOptions, setBrandOptions] = useState<string[]>([]);
+  const [modelOptions, setModelOptions] = useState<string[]>([]);
+  const [versionOptions, setVersionOptions] = useState<string[]>([]);
 
   useEffect(() => {
     if (initialData) {
@@ -93,6 +96,55 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
       }
     }
   }, [initialData, carId]);
+
+  // Load brands on mount
+  useEffect(() => {
+    let ignore = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/filters/options', { cache: 'no-store' })
+        const data = await res.json()
+        if (!ignore) {
+          setBrandOptions(Array.isArray(data.brands) ? data.brands : [])
+        }
+      } catch {
+        if (!ignore) setBrandOptions([])
+      }
+    })()
+    return () => { ignore = true }
+  }, [])
+
+  // Load models when brand changes (and when initialData has brand)
+  useEffect(() => {
+    if (!formData.brand) { setModelOptions([]); setVersionOptions([]); return }
+    let ignore = false
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/filters/models?brand=${encodeURIComponent(formData.brand)}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!ignore) setModelOptions(Array.isArray(data.models) ? data.models : [])
+      } catch {
+        if (!ignore) setModelOptions([])
+      }
+    })()
+    return () => { ignore = true }
+  }, [formData.brand])
+
+  // Load versions when model changes
+  useEffect(() => {
+    if (!formData.brand || !formData.model) { setVersionOptions([]); return }
+    let ignore = false
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/filters/versions?brand=${encodeURIComponent(formData.brand)}&model=${encodeURIComponent(formData.model)}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (!ignore) setVersionOptions(Array.isArray(data.versions) ? data.versions : [])
+      } catch {
+        if (!ignore) setVersionOptions([])
+      }
+    })()
+    return () => { ignore = true }
+  }, [formData.brand, formData.model])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -296,26 +348,56 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
               </div>
               <div>
                 <label className={styles.label}>Марка *</label>
-                <select name="brand" required className={styles.select} value={formData.brand} onChange={handleChange}>
+                <select 
+                  name="brand" 
+                  required 
+                  className={styles.select} 
+                  value={formData.brand} 
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setFormData(prev => ({ ...prev, brand: value, model: "", modelVersion: "" }))
+                  }}
+                >
                   <option value="">Выберите марку</option>
-                  <option value="Toyota">Toyota</option>
-                  <option value="BMW">BMW</option>
-                  <option value="Mercedes-Benz">Mercedes-Benz</option>
-                  <option value="Audi">Audi</option>
-                  <option value="Volkswagen">Volkswagen</option>
-                  <option value="Honda">Honda</option>
-                  <option value="Nissan">Nissan</option>
-                  <option value="Lexus">Lexus</option>
-                  <option value="Infiniti">Infiniti</option>
+                  {(brandOptions.length ? brandOptions : ['Toyota','BMW','Mercedes-Benz','Audi','Volkswagen','Honda','Nissan','Lexus','Infiniti']).map(b => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className={styles.label}>Модель *</label>
-                <input name="model" required placeholder="Например: Camry" className={styles.input} value={formData.model} onChange={handleChange} />
+                {modelOptions.length > 0 ? (
+                  <select 
+                    name="model" 
+                    required 
+                    className={styles.select} 
+                    value={formData.model} 
+                    onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value, modelVersion: "" }))}
+                    disabled={!formData.brand}
+                  >
+                    <option value="">Выберите модель</option>
+                    {modelOptions.map(m => (<option key={m} value={m}>{m}</option>))}
+                  </select>
+                ) : (
+                  <input name="model" required placeholder="Например: Camry" className={styles.input} value={formData.model} onChange={handleChange} />
+                )}
               </div>
               <div>
                 <label className={styles.label}>Версия модели</label>
-                <input name="modelVersion" placeholder="Например: 2.5 AT Comfort" className={styles.input} value={formData.modelVersion} onChange={handleChange} />
+                {versionOptions.length > 0 ? (
+                  <select 
+                    name="modelVersion" 
+                    className={styles.select} 
+                    value={formData.modelVersion} 
+                    onChange={(e) => setFormData(prev => ({ ...prev, modelVersion: e.target.value }))}
+                    disabled={!formData.brand || !formData.model}
+                  >
+                    <option value="">Выберите версию</option>
+                    {versionOptions.map(v => (<option key={v} value={v}>{v}</option>))}
+                  </select>
+                ) : (
+                  <input name="modelVersion" placeholder="Например: 2.5 AT Comfort" className={styles.input} value={formData.modelVersion} onChange={handleChange} />
+                )}
               </div>
               <div>
                 <label className={styles.label}>Цена (₸) *</label>
