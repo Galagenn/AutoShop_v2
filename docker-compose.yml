@@ -18,7 +18,7 @@ services:
     build: .
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/autoshop?schema=public
-      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://185.129.49.120
       NEXTAUTH_SECRET: changeme-very-secret
       # Cloudinary (provide your real values via env or compose overrides)
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
