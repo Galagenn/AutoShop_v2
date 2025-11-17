@@ -304,23 +304,25 @@ export default function Page() {
 
       {/* CTA Section */}
       <section className="py-16">
-        <div className="container-page text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold mb-6">
-            Готовы начать?
-          </h2>
-          <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-            Свяжитесь с нами прямо сейчас, и мы поможем вам найти идеальный автомобиль или продать ваш
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/catalog" className="btn-primary text-lg px-8 py-4">
-              Посмотреть каталог
-            </Link>
-            <Link href="/sell" className="btn-secondary text-lg px-8 py-4">
-              Продать автомобиль
-            </Link>
+        <div className="container-page">
+          <div className="flex flex-col items-center justify-center text-center">
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-6">
+              Готовы начать?
+            </h2>
+            <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto text-center">
+              Свяжитесь с нами прямо сейчас, и мы поможем вам найти идеальный автомобиль или продать ваш
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/catalog" className="btn-primary text-lg px-8 py-4">
+                Посмотреть каталог
+              </Link>
+              <Link href="/sell" className="btn-secondary text-lg px-8 py-4">
+                Продать автомобиль
+              </Link>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
       
     </div>
   );

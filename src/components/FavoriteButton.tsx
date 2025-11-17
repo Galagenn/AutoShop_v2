@@ -1,14 +1,36 @@
 "use client";
 import { useState, useTransition, MouseEvent } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   carId: string;
   initialFavorite?: boolean;
   variant?: "button" | "icon";
   className?: string;
+  isOwner?: boolean;
+  userRole?: string;
 };
 
-export default function FavoriteButton({ carId, initialFavorite = false, variant = "button", className }: Props) {
+export default function FavoriteButton({ carId, initialFavorite = false, variant = "button", className, isOwner = false, userRole }: Props) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  
+  // Скрываем кнопку для продавцов
+  if (userRole === "SELLER") {
+    return null;
+  }
+  
+  if (isOwner) {
+    if (variant === "icon") {
+      return null;
+    }
+    return (
+      <span className={`btn-ghost text-white/60 cursor-not-allowed ${className || ""}`}>
+        Это ваше объявление
+      </span>
+    );
+  }
   const [isFavorite, setIsFavorite] = useState(!!initialFavorite);
   const [isPending, startTransition] = useTransition();
 
@@ -17,6 +39,13 @@ export default function FavoriteButton({ carId, initialFavorite = false, variant
       e.preventDefault();
       e.stopPropagation();
     }
+    
+    // Если пользователь не авторизован, перенаправляем на регистрацию
+    if (!session) {
+      router.push("/auth/register");
+      return;
+    }
+    
     startTransition(async () => {
       try {
         if (!isFavorite) {

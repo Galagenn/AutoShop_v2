@@ -101,7 +101,7 @@ export default async function BuyerDashboardPage() {
                     <div className={styles.listingPrice}>{(typeof f.car.price === 'number' ? f.car.price.toLocaleString() : f.car.price)} ₸</div>
                     <div className={styles.listingActions}>
                       <Link href={'/car/' + f.car.id} className={styles.btnGhost}>Посмотреть</Link>
-                      <FavoriteButton carId={f.car.id} initialFavorite={true} />
+                      <FavoriteButton carId={f.car.id} initialFavorite={true} isOwner={f.car?.ownerId === userId} />
                     </div>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export default async function BuyerDashboardPage() {
                     <div className={styles.listingPrice}>{(typeof c.price === 'number' ? c.price.toLocaleString() : c.price)} ₸</div>
                     <div className={styles.listingActions}>
                       <Link href={'/car/' + c.id} className={styles.btnGhost}>Посмотреть</Link>
-                      <FavoriteButton carId={c.id} initialFavorite={favoriteCarIdSet.has(c.id)} />
+                      <FavoriteButton carId={c.id} initialFavorite={favoriteCarIdSet.has(c.id)} isOwner={c.ownerId === userId} />
                     </div>
                   </div>
                 </div>

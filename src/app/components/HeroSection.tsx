@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import HeroCarousel from "./HeroCarousel";
 
@@ -30,21 +30,8 @@ export default function HeroSection() {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [openBrand, setOpenBrand] = useState(false);
-  const [openYear, setOpenYear] = useState(false);
-  const brandRef = useRef<HTMLDivElement>(null);
-  const yearRef = useRef<HTMLDivElement>(null);
   const [brandOptions, setBrandOptions] = useState<string[]>([]);
   const [yearOptions, setYearOptions] = useState<number[]>([]);
-
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      if (brandRef.current && !brandRef.current.contains(e.target as Node)) setOpenBrand(false);
-      if (yearRef.current && !yearRef.current.contains(e.target as Node)) setOpenYear(false);
-    };
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, []);
 
   useEffect(() => {
     let ignore = false
@@ -80,40 +67,37 @@ export default function HeroSection() {
       {/* Filters */}
       <div className="container-page">
         <div className="hero-filters">
-          {/* Brand dropdown */}
-          <div ref={brandRef} className={`hero-dd hero-dd-brand ${openBrand ? 'open' : ''}`} onClick={() => setOpenBrand(!openBrand)}>
-            <span className="hero-dd-label">{brand || 'Марка'}</span>
-            <svg className="hero-dd-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10l5 5l5-5z"/></svg>
-            {openBrand && (
-              <div className="hero-dd-menu">
-                <div className="hero-dd-list">
-                  {(brandOptions.length ? brandOptions : ['BMW','HYUNDAI','PORSCHE','TOYOTA','LEXUS','AUDI','MERCEDES-BENZ']).map((b) => (
-                    <div key={b} className={`hero-dd-item ${brand===b ? 'active' : ''}`} onClick={() => { setBrand(b); setOpenBrand(false); }}>
-                      {b}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Brand select */}
+          <div className={`hero-select-wrapper hero-dd-brand ${brand ? "has-value" : ""}`}>
+            <select
+              className={`hero-select ${brand ? "filled" : ""}`}
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+            >
+              <option value="">Марка</option>
+              {(brandOptions.length ? brandOptions : ['BMW','HYUNDAI','PORSCHE','TOYOTA','LEXUS','AUDI','MERCEDES-BENZ']).map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
           </div>
           <div className="hero-filter hero-filter-model">
             <input className="hero-input" placeholder="Модель" value={model} onChange={(e) => setModel(e.target.value)} />
           </div>
-          {/* Year dropdown */}
-          <div ref={yearRef} className={`hero-dd hero-dd-year ${openYear ? 'open' : ''}`} onClick={() => setOpenYear(!openYear)}>
-            <span className="hero-dd-label">{year || 'Год'}</span>
-            <svg className="hero-dd-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10l5 5l5-5z"/></svg>
-            {openYear && (
-              <div className="hero-dd-menu">
-                <div className="hero-dd-list">
-                  {(yearOptions.length ? yearOptions : [2025,2024,2023,2022,2021]).map((y) => (
-                    <div key={y} className={`hero-dd-item ${String(y)===year ? 'active' : ''}`} onClick={() => { setYear(String(y)); setOpenYear(false); }}>
-                      {y}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Year select */}
+          <div className={`hero-select-wrapper hero-dd-year ${year ? "has-value" : ""}`}>
+            <select
+              className={`hero-select ${year ? "filled" : ""}`}
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            >
+              <option value="">Год</option>
+              {(yearOptions.length ? yearOptions : [2025,2024,2023,2022,2021]).map((y) => {
+                const value = String(y);
+                return (
+                  <option key={value} value={value}>{value}</option>
+                );
+              })}
+            </select>
           </div>
           <div className="hero-filter hero-filter-price">
             <input className="hero-input" placeholder="Цена до" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />

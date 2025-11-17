@@ -34,6 +34,7 @@ export default async function Page({ params }: PageProps) {
   const { id } = await params
   const session = await auth()
   const userId = (session?.user as unknown as { id?: string } | undefined)?.id
+  const userRole = (session?.user as unknown as { role?: string })?.role || undefined
   let car = null as null | Awaited<ReturnType<typeof prisma.car.findUnique>>
   try {
     car = await prisma.car.findUnique({ where: { id }, include: { owner: true, favoritedBy: userId ? { where: { userId } } : false as any } as any })
@@ -127,16 +128,66 @@ export default async function Page({ params }: PageProps) {
     astana: 'Астана',
     shymkent: 'Шымкент',
     aktobe: 'Актобе',
-    karaganda: 'Караганда',
-    taraz: 'Тараз',
-    pavlodar: 'Павлодар',
-    semey: 'Семей',
-    uralsk: 'Уральск',
-    kostanay: 'Костанай',
-    kyzylorda: 'Кызылорда',
-    petropavl: 'Петропавловск',
     atyrau: 'Атырау',
     aktau: 'Актау',
+    akkol: 'Акколь',
+    aksay: 'Аксай',
+    aksu: 'Аксу',
+    arkalyk: 'Аркалык',
+    arys: 'Арыс',
+    ayagoz: 'Аягоз',
+    balhash: 'Балхаш',
+    zhanaozhen: 'Жанаозен',
+    zhezkazgan: 'Жезказган',
+    zaysan: 'Зайсан',
+    zhanatas: 'Жанатас',
+    zharkent: 'Жаркент',
+    zhetybay: 'Жетыбай',
+    zhitikara: 'Житикара',
+    kandyagash: 'Кандыагаш',
+    kapshagay: 'Капшагай',
+    karaganda: 'Караганда',
+    karazhal: 'Каражал',
+    karatau: 'Каратау',
+    karkaralinsk: 'Каркаралинск',
+    kaspiysk: 'Каспийск',
+    kentau: 'Кентау',
+    kokchetav: 'Кокшетау',
+    kostanay: 'Костанай',
+    kulsary: 'Кульсары',
+    kyzylorda: 'Кызылорда',
+    leninogorsk: 'Лениногорск',
+    lisakovsk: 'Лисаковск',
+    makinsk: 'Макинск',
+    mamlyutka: 'Мамлютка',
+    pavlodar: 'Павлодар',
+    petropavl: 'Петропавловск',
+    priozersk: 'Приозерск',
+    ridder: 'Риддер',
+    rudnyy: 'Рудный',
+    saran: 'Саран',
+    saryagash: 'Сарыагаш',
+    satpayev: 'Сатпаев',
+    semey: 'Семей',
+    sergeevka: 'Сергеевка',
+    serebryansk: 'Серебрянск',
+    shakhtinsk: 'Шахтинск',
+    shchuchinsk: 'Щучинск',
+    shardara: 'Шардара',
+    stepnogorsk: 'Степногорск',
+    stepnyak: 'Степняк',
+    taldikorgan: 'Талдыкорган',
+    taraz: 'Тараз',
+    temirtau: 'Темиртау',
+    tobol: 'Тобол',
+    turkestan: 'Туркестан',
+    uchalinsk: 'Учалинск',
+    uralsk: 'Уральск',
+    'ust-kamenogorsk': 'Усть-Каменогорск',
+    esil: 'Есиль',
+    ekibastuz: 'Экибастуз',
+    emba: 'Эмба',
+    shalqar: 'Шалкар',
   }
   const translateCity = (value?: string | null) => {
     if (!value) return '—'
@@ -205,7 +256,7 @@ export default async function Page({ params }: PageProps) {
               </div>
               <div className="actions-row">
                 <a href={telHref} className="btn-primary">Связаться с продавцом</a>
-                <FavoriteButton carId={car.id} initialFavorite={isFavorited} />
+                <FavoriteButton carId={car.id} initialFavorite={isFavorited} isOwner={userId ? car.ownerId === userId : false} userRole={userRole} />
               </div>
 
               <aside className="car-specs">

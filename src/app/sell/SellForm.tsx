@@ -252,6 +252,13 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'brand') {
+      setModelOptions([]);
+      setVersionOptions([]);
+    }
+    if (name === 'model') {
+      setVersionOptions([]);
+    }
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -355,6 +362,8 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
                   value={formData.brand} 
                   onChange={(e) => {
                     const value = e.target.value
+                    setModelOptions([]);
+                    setVersionOptions([]);
                     setFormData(prev => ({ ...prev, brand: value, model: "", modelVersion: "" }))
                   }}
                 >
@@ -372,7 +381,11 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
                     required 
                     className={styles.select} 
                     value={formData.model} 
-                    onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value, modelVersion: "" }))}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setVersionOptions([]);
+                      setFormData(prev => ({ ...prev, model: value, modelVersion: "" }))
+                    }}
                     disabled={!formData.brand}
                   >
                     <option value="">Выберите модель</option>
@@ -487,16 +500,66 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
                   <option value="astana">Астана</option>
                   <option value="shymkent">Шымкент</option>
                   <option value="aktobe">Актобе</option>
-                  <option value="karaganda">Караганда</option>
-                  <option value="taraz">Тараз</option>
-                  <option value="pavlodar">Павлодар</option>
-                  <option value="semey">Семей</option>
-                  <option value="uralsk">Уральск</option>
-                  <option value="kostanay">Костанай</option>
-                  <option value="kyzylorda">Кызылорда</option>
-                  <option value="petropavl">Петропавловск</option>
                   <option value="atyrau">Атырау</option>
                   <option value="aktau">Актау</option>
+                  <option value="akkol">Акколь</option>
+                  <option value="aksay">Аксай</option>
+                  <option value="aksu">Аксу</option>
+                  <option value="arkalyk">Аркалык</option>
+                  <option value="arys">Арыс</option>
+                  <option value="ayagoz">Аягоз</option>
+                  <option value="balhash">Балхаш</option>
+                  <option value="zhanaozhen">Жанаозен</option>
+                  <option value="zhezkazgan">Жезказган</option>
+                  <option value="zaysan">Зайсан</option>
+                  <option value="zhanatas">Жанатас</option>
+                  <option value="zharkent">Жаркент</option>
+                  <option value="zhetybay">Жетыбай</option>
+                  <option value="zhitikara">Житикара</option>
+                  <option value="kandyagash">Кандыагаш</option>
+                  <option value="kapshagay">Капшагай</option>
+                  <option value="karaganda">Караганда</option>
+                  <option value="karazhal">Каражал</option>
+                  <option value="karatau">Каратау</option>
+                  <option value="karkaralinsk">Каркаралинск</option>
+                  <option value="kaspiysk">Каспийск</option>
+                  <option value="kentau">Кентау</option>
+                  <option value="kokchetav">Кокшетау</option>
+                  <option value="kostanay">Костанай</option>
+                  <option value="kulsary">Кульсары</option>
+                  <option value="kyzylorda">Кызылорда</option>
+                  <option value="leninogorsk">Лениногорск</option>
+                  <option value="lisakovsk">Лисаковск</option>
+                  <option value="makinsk">Макинск</option>
+                  <option value="mamlyutka">Мамлютка</option>
+                  <option value="pavlodar">Павлодар</option>
+                  <option value="petropavl">Петропавловск</option>
+                  <option value="priozersk">Приозерск</option>
+                  <option value="ridder">Риддер</option>
+                  <option value="rudnyy">Рудный</option>
+                  <option value="saran">Саран</option>
+                  <option value="saryagash">Сарыагаш</option>
+                  <option value="satpayev">Сатпаев</option>
+                  <option value="semey">Семей</option>
+                  <option value="sergeevka">Сергеевка</option>
+                  <option value="serebryansk">Серебрянск</option>
+                  <option value="shakhtinsk">Шахтинск</option>
+                  <option value="shchuchinsk">Щучинск</option>
+                  <option value="shardara">Шардара</option>
+                  <option value="stepnogorsk">Степногорск</option>
+                  <option value="stepnyak">Степняк</option>
+                  <option value="taldikorgan">Талдыкорган</option>
+                  <option value="taraz">Тараз</option>
+                  <option value="temirtau">Темиртау</option>
+                  <option value="tobol">Тобол</option>
+                  <option value="turkestan">Туркестан</option>
+                  <option value="uchalinsk">Учалинск</option>
+                  <option value="uralsk">Уральск</option>
+                  <option value="ust-kamenogorsk">Усть-Каменогорск</option>
+                  <option value="esil">Есиль</option>
+                  <option value="ekibastuz">Экибастуз</option>
+                  <option value="emba">Эмба</option>
+                  <option value="shalqar">Шалкар</option>
                 </select>
               </div>
 
@@ -514,6 +577,7 @@ export default function SellForm({ carId, initialData }: { carId?: string; initi
                   <option value="">Выберите кузов</option>
                   <option value="седан">Седан</option>
                   <option value="хэтчбек">Хэтчбек</option>
+                  <option value="лифтбек">Лифтбэк</option>
                   <option value="купе">Купе</option>
                   <option value="универсал">Универсал</option>
                   <option value="кроссовер">Кроссовер</option>

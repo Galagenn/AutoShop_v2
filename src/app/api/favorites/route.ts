@@ -9,6 +9,9 @@ export async function POST(req: Request) {
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { carId } = await req.json()
   if (!carId) return NextResponse.json({ error: 'carId required' }, { status: 400 })
+  const car = await prisma.car.findUnique({ where: { id: carId }, select: { ownerId: true } })
+  if (!car) return NextResponse.json({ error: 'Car not found' }, { status: 404 })
+  if (car.ownerId === userId) return NextResponse.json({ error: 'Нельзя добавить своё авто в избранное' }, { status: 403 })
   const fav = await prisma.favorite.upsert({
     where: { userId_carId: { userId, carId } },
     update: {},

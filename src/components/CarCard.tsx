@@ -16,11 +16,12 @@ export type Car = {
   drive?: string;
   engine?: string;
   isFavorited?: boolean;
+  isOwner?: boolean;
 };
 
 import FavoriteButton from "./FavoriteButton";
 
-export default function CarCard({ car }: { car: Car }) {
+export default function CarCard({ car, userRole }: { car: Car; userRole?: string }) {
   const router = useRouter();
   const numericPrice = Number(String(car.price).replace(/[^0-9]/g, ""));
   const monthly = Number.isFinite(numericPrice) && numericPrice > 0
@@ -35,16 +36,66 @@ export default function CarCard({ car }: { car: Car }) {
     astana: 'Астана',
     shymkent: 'Шымкент',
     aktobe: 'Актобе',
-    karaganda: 'Караганда',
-    taraz: 'Тараз',
-    pavlodar: 'Павлодар',
-    semey: 'Семей',
-    uralsk: 'Уральск',
-    kostanay: 'Костанай',
-    kyzylorda: 'Кызылорда',
-    petropavl: 'Петропавловск',
     atyrau: 'Атырау',
     aktau: 'Актау',
+    akkol: 'Акколь',
+    aksay: 'Аксай',
+    aksu: 'Аксу',
+    arkalyk: 'Аркалык',
+    arys: 'Арыс',
+    ayagoz: 'Аягоз',
+    balhash: 'Балхаш',
+    zhanaozhen: 'Жанаозен',
+    zhezkazgan: 'Жезказган',
+    zaysan: 'Зайсан',
+    zhanatas: 'Жанатас',
+    zharkent: 'Жаркент',
+    zhetybay: 'Жетыбай',
+    zhitikara: 'Житикара',
+    kandyagash: 'Кандыагаш',
+    kapshagay: 'Капшагай',
+    karaganda: 'Караганда',
+    karazhal: 'Каражал',
+    karatau: 'Каратау',
+    karkaralinsk: 'Каркаралинск',
+    kaspiysk: 'Каспийск',
+    kentau: 'Кентау',
+    kokchetav: 'Кокшетау',
+    kostanay: 'Костанай',
+    kulsary: 'Кульсары',
+    kyzylorda: 'Кызылорда',
+    leninogorsk: 'Лениногорск',
+    lisakovsk: 'Лисаковск',
+    makinsk: 'Макинск',
+    mamlyutka: 'Мамлютка',
+    pavlodar: 'Павлодар',
+    petropavl: 'Петропавловск',
+    priozersk: 'Приозерск',
+    ridder: 'Риддер',
+    rudnyy: 'Рудный',
+    saran: 'Саран',
+    saryagash: 'Сарыагаш',
+    satpayev: 'Сатпаев',
+    semey: 'Семей',
+    sergeevka: 'Сергеевка',
+    serebryansk: 'Серебрянск',
+    shakhtinsk: 'Шахтинск',
+    shchuchinsk: 'Щучинск',
+    shardara: 'Шардара',
+    stepnogorsk: 'Степногорск',
+    stepnyak: 'Степняк',
+    taldikorgan: 'Талдыкорган',
+    taraz: 'Тараз',
+    temirtau: 'Темиртау',
+    tobol: 'Тобол',
+    turkestan: 'Туркестан',
+    uchalinsk: 'Учалинск',
+    uralsk: 'Уральск',
+    'ust-kamenogorsk': 'Усть-Каменогорск',
+    esil: 'Есиль',
+    ekibastuz: 'Экибастуз',
+    emba: 'Эмба',
+    shalqar: 'Шалкар',
   };
   const formatCity = (value?: string) => {
     if (!value) return undefined;
@@ -64,7 +115,7 @@ export default function CarCard({ car }: { car: Car }) {
         <Image src={car.image} alt={car.title} fill className="object-cover" />
         <div className="absolute top-2 right-2 z-10">
           <div onClick={(e) => e.stopPropagation()}>
-            <FavoriteButton variant="icon" carId={car.id} initialFavorite={!!car.isFavorited} />
+            <FavoriteButton variant="icon" carId={car.id} initialFavorite={!!car.isFavorited} isOwner={!!car.isOwner} userRole={userRole} />
           </div>
         </div>
       </div>

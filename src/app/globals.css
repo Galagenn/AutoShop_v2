@@ -94,6 +94,7 @@ p {
   padding-left: 1rem;
   padding-right: 1rem;
   margin-top: 1rem;
+  overflow: visible;
 }
 
 @media (max-width: 640px) {
@@ -1647,16 +1648,56 @@ select.input-modern option, select.input-modern optgroup {
   justify-content: center;
   gap: clamp(3px, 1.2vw, 12px);
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 2px;
+  position: relative;
 }
 .hero-filters::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
+}
+
+.hero-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.24);
+  border-radius: clamp(8px, 1.2vw, 12px);
+  background: #151515;
+  color: #fff;
+  height: clamp(36px, 4.5vw, 48px);
+  padding: 0 clamp(12px, 1.5vw, 16px);
+  min-width: 0;
+  flex-shrink: 0;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.hero-select-wrapper::after {
+  content: "";
+  position: absolute;
+  right: clamp(10px, 1.3vw, 14px);
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: clamp(6px, 0.9vw, 8px);
+  height: clamp(6px, 0.9vw, 8px);
+  border-right: 2px solid rgba(255,255,255,0.7);
+  border-bottom: 2px solid rgba(255,255,255,0.7);
+  pointer-events: none;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.hero-select-wrapper:focus-within {
+  border-color: #C8BF2F;
+  box-shadow: 0 0 0 2px rgba(200,191,47,0.2) inset;
+}
+.hero-select-wrapper:focus-within::after {
+  transform: translateY(-50%) rotate(-135deg);
+  border-color: #C8BF2F;
+}
+.hero-select-wrapper.has-value {
+  border-color: rgba(255,255,255,0.36);
 }
 
 /* Плавное масштабирование ширины полей в зависимости от разрешения */
@@ -1697,8 +1738,26 @@ select.input-modern option, select.input-modern optgroup {
   font-size: clamp(10px, 1.3vw, 14px);
   width: 100%;
 }
+.hero-select {
+  padding-right: clamp(22px, 2.4vw, 36px);
+  cursor: pointer;
+  color: rgba(255,255,255,0.65);
+}
+.hero-select.filled {
+  color: #fff;
+}
 .hero-input::placeholder { color: rgba(255,255,255,0.6); }
-.hero-select option { color: #000; }
+.hero-select option { 
+  color: #fff; 
+  background: #111; 
+  padding: clamp(6px, 1vw, 10px) clamp(10px, 1.4vw, 14px); 
+}
+.hero-select option:hover,
+.hero-select option:focus,
+.hero-select option:checked {
+  background: linear-gradient(135deg, rgba(200,191,47,0.25), rgba(200,191,47,0.05));
+  color: #fff;
+}
 
 .hero-find {
   display: inline-flex;
@@ -1756,8 +1815,12 @@ select.input-modern option, select.input-modern optgroup {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: clamp(9px, 1.2vw, 12px);
   overflow: hidden;
-  z-index: 20;
+  z-index: 1000;
   box-shadow: 0 clamp(8px, 1vw, 10px) clamp(20px, 2.4vw, 24px) rgba(0,0,0,0.35);
+  min-width: 100%;
+  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 .hero-dd-search { 
   width: 100%; 
